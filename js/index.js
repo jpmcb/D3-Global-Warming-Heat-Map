@@ -18,9 +18,7 @@ function runningData() {
   var w = window.innerWidth * .80;
   var yPadding = 50;
   var xPadding = 50;
-  
-  console.log(d3.timeYear(1799));
-  
+    
   var xScale = d3.scaleTime() //based off years, greater to the right
                 .domain([new Date(d3.min(yearsArray), 0), new Date(d3.max(yearsArray), 0)])
                 .range([xPadding + 30, w - (xPadding + 15)]);
@@ -45,9 +43,7 @@ function runningData() {
                 .attr('width', 300)
                 .attr('height', 40)
                 .attr('transform', 'translate(' + (w/2 - 150) + ', 15)');
-  
-  var zoomed;
-                
+                  
   legend.append('text')
     .text('Cooler Temps -')
     .attr('y', 12)
@@ -75,6 +71,30 @@ function runningData() {
     .attr('transform', 'translate(5,' + (h - yPadding)+ ')')
     .call(xAxis);
   
+  var button = mapSvg.append('g')
+    .attr('class', 'button')
+    .attr('width', 150)
+    .attr('height', 40)
+    //.attr('id', 'populate-graph-button')
+    .attr('transform', 'translate(' + ((w + xPadding)/2 - 100) + ',100)')
+    .on('click', runMapAnimation);
+  
+  button.append('rect')
+    .attr('width', 150)
+    .attr('height', 40)
+    .attr('fill', '#070026')
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('rx', 5)
+    .attr('ry', 5)
+  
+  button.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('x', 150/2)
+    .attr('y', 24)
+    .style('fill', '#f2f2f2')
+    .text('Click to see')
+  
   mapSvg.selectAll('text.y-axis')
     .data(months).enter()
     .append('text')
@@ -88,7 +108,7 @@ function runningData() {
   
   mapSvg.selectAll('rect.map-rect')
     .data(mydata.monthlyVariance).enter().append('rect')
-      .attr('fill', 'white')
+      .attr('fill', '#f2f2f2')
       .attr('height', function(d,i) { return Math.random() * 20})
       .attr('width', function(d,i) { return Math.random() * 20})
       .attr('x', function(d,i) { return Math.random() * w})
@@ -109,7 +129,10 @@ function runningData() {
         .on('mouseout', function() {
           var getTooltip = event.target.className.baseVal.replace('map-rect ', '');
           document.getElementById(getTooltip).style.display = 'none';
-        })
+        });
+   
+  function runMapAnimation() {
+    mapSvg.selectAll('rect.map-rect')
       .transition()
       .duration(1300)
       .delay( function(d,i) {return i;})
@@ -118,7 +141,28 @@ function runningData() {
         .attr('fill', function(d,i) { return colorScale(d.variance); })
         .attr('height', (h / 12) - 8.5)
         .attr('width', yearsArray.length / w + 4);
+    
+    
+    
+    mapSvg.select('g.button')
+      .transition()
+      .duration(750)
+        .attr('transform', 'translate(57,5)')
+    
+    button.select('rect')
+      .transition()
+      .duration(500)
+        .attr('fill', '#f2f2f2')
+    
+    button.select('text')
+      .transition()
+      .duration(1000)
+      .delay(5000)
+        .text('Hover for details')
+        .style('fill', 'black')
+        .style('font-weight', 'bolder')
         
+  }    
 }
 
 $.getJSON(ajaxUrl, function(data) {
