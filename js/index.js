@@ -1,10 +1,11 @@
+//URL for data to be pulled from, define arrays and variables to be used 
 var ajaxUrl = 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json',
     mydata, yearsArray = [], yearStringArray = [], tempArray = [];
-
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+//upon ajax request being done, run code to set up graph
 function runningData() {
-  var toolTips = d3.selectAll('div.heat-map-data')
+  var toolTips = d3.selectAll('div.heat-map-data') //on hover, show this tooltip in graph
                     .data(mydata.monthlyVariance)
                     .enter().append('div')
                     .attr('class', 'heat-map-data')
@@ -31,7 +32,7 @@ function runningData() {
                 .domain([1, 12])
                 .range([yPadding, h - (yPadding * 2)]); 
     
-  var mapSvg = d3.select('#root').append('svg')
+  var mapSvg = d3.select('#root').append('svg') //base svg for heat map to go to
               .attr('id', 'root-svg')
               .attr('height', h)
               .attr('width', w);
@@ -39,6 +40,7 @@ function runningData() {
   var xAxis = d3.axisBottom(xScale)
                 .ticks(d3.timeYear.every(20));
                 
+  // top reference with regards to what colors mean what
   var legend = mapSvg.append('g')
                 .attr('width', 300)
                 .attr('height', 40)
@@ -46,26 +48,26 @@ function runningData() {
                   
   legend.append('text')
     .text('Cooler Temps -')
-    .attr('y', 12)
+    .attr('y', 12);
     
   legend.append('rect')
     .attr('width', 15)
     .attr('height', 15)
     .attr('fill', '#00f6ff')
     .attr('x', 100)
-    .attr('y', 0)
+    .attr('y', 0);
   
   legend.append('text')
     .text('Hotter Temps -')
     .attr('x', 185)
-    .attr('y', 12)
+    .attr('y', 12);
   
   legend.append('rect')
     .attr('width', 15)
     .attr('height', 15)
     .attr('fill', '#ff0019')
     .attr('x', 285)
-    .attr('y', 0)
+    .attr('y', 0);
   
   mapSvg.append('g')
     .attr('transform', 'translate(5,' + (h - yPadding)+ ')')
@@ -79,6 +81,7 @@ function runningData() {
     .attr('transform', 'translate(' + ((w + xPadding)/2 - 100) + ',100)')
     .on('click', runMapAnimation);
   
+  //onclick, animation starts, graph populates
   button.append('rect')
     .attr('width', 150)
     .attr('height', 40)
@@ -86,15 +89,16 @@ function runningData() {
     .attr('x', 0)
     .attr('y', 0)
     .attr('rx', 5)
-    .attr('ry', 5)
+    .attr('ry', 5);
   
   button.append('text')
     .attr('text-anchor', 'middle')
     .attr('x', 150/2)
     .attr('y', 24)
     .style('fill', '#f2f2f2')
-    .text('Click to see')
+    .text('Click to see');
   
+  //populate left side with months 
   mapSvg.selectAll('text.y-axis')
     .data(months).enter()
     .append('text')
@@ -103,9 +107,10 @@ function runningData() {
     .attr('y', function(d,i) {
       return  yScale(i + 1) + 25;
     })
-    .text(function(d,i) {return d;})
+    .text(function(d,i) {return d;});
     
-  
+  //code for data related to each map rectangle representing
+  //one month (yaxis) of each year(xaxis) & avg temp(color)
   mapSvg.selectAll('rect.map-rect')
     .data(mydata.monthlyVariance).enter().append('rect')
       .attr('fill', '#f2f2f2')
@@ -131,7 +136,7 @@ function runningData() {
           document.getElementById(getTooltip).style.display = 'none';
         });
    
-  function runMapAnimation() {
+  function runMapAnimation() { //animation after click of event button
     mapSvg.selectAll('rect.map-rect')
       .transition()
       .duration(1300)
@@ -141,8 +146,6 @@ function runningData() {
         .attr('fill', function(d,i) { return colorScale(d.variance); })
         .attr('height', (h / 12) - 8.5)
         .attr('width', yearsArray.length / w + 4);
-    
-    
     
     mapSvg.select('g.button')
       .transition()
@@ -172,7 +175,6 @@ $.getJSON(ajaxUrl, function(data) {
     yearsArray.push(mydata.monthlyVariance[i].year);
     tempArray.push(mydata.monthlyVariance[i].variance);
   }
-  console.log(mydata)
-  
+    
   runningData();
 })
