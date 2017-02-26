@@ -3,6 +3,7 @@
 $svg: #f2f2f2;
 $hover: #efefef;
 $blue: #070026;
+$final: #878787;
 
 @mixin box {
   background: $svg;
@@ -92,7 +93,8 @@ h2 {
 }
 
 #space {
-  background-image: url('http://vignette4.wikia.nocookie.net/masseffect/images/d/d1/Earth_(orbit).png/revision/latest?cb=20140921173727');
+  background: $final;
+  //background-image: url('http://vignette4.wikia.nocookie.net/masseffect/images/d/d1/Earth_(orbit).png/revision/latest?cb=20140921173727');
 }
 //2nd HALF
 #part-2 {
